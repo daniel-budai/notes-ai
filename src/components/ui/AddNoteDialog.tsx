@@ -22,6 +22,10 @@ interface AddNoteDialogProps {
 export default function AddNoteDialog({ open, setOpen }: AddNoteDialogProps) {
   const form = useForm<CreateNoteSchema>({
     resolver: zodResolver(createNoteSchema),
+    defaultValues: {
+      title: "",
+      content: "",
+    },
   });
 
   async function onSubmit(input: CreateNoteSchema) {
