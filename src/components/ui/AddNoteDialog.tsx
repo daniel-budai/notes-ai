@@ -12,6 +12,7 @@ import {
 } from "./form";
 import { Input } from "./input";
 import { Textarea } from "./textarea";
+import LoadingButton from "./loading-button";
 
 interface AddNoteDialogProps {
   open: boolean;
@@ -56,14 +57,21 @@ export default function AddNoteDialog({ open, setOpen }: AddNoteDialogProps) {
                 <FormItem>
                   <FormLabel>Note content</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="content" {...field} />
+                    <Textarea placeholder="Content" {...field} />
                   </FormControl>
                   <FormMessage />
                   {/* //show the error message from schema */}
                 </FormItem>
               )}
             />
-            <DialogFooter></DialogFooter>
+            <DialogFooter>
+              <LoadingButton
+                type="submit"
+                loading={form.formState.isSubmitting}
+              >
+                Submit
+              </LoadingButton>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>
