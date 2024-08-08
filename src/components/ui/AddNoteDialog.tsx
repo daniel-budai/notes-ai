@@ -13,6 +13,8 @@ import {
 import { Input } from "./input";
 import { Textarea } from "./textarea";
 import LoadingButton from "./loading-button";
+import { useRouter } from "next/navigation";
+import { set } from "zod";
 
 interface AddNoteDialogProps {
   open: boolean;
@@ -20,6 +22,8 @@ interface AddNoteDialogProps {
 }
 
 export default function AddNoteDialog({ open, setOpen }: AddNoteDialogProps) {
+  const router = useRouter();
+
   const form = useForm<CreateNoteSchema>({
     resolver: zodResolver(createNoteSchema),
     defaultValues: {
@@ -29,7 +33,21 @@ export default function AddNoteDialog({ open, setOpen }: AddNoteDialogProps) {
   });
 
   async function onSubmit(input: CreateNoteSchema) {
-    alert(input);
+    try {
+      const response = await fetch("/api/notes", {
+        method: "POST",
+        body: JSON.stringify(input),
+      });
+      if (!response.ok)
+        throw Error("An error occurred while creating the note");
+
+      form.reset();
+      router.refresh();
+      setOpen(false);
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred while creating the note"); // redo to a toast in future
+    }
   }
 
   return (
