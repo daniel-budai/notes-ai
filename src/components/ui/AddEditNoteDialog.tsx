@@ -14,23 +14,26 @@ import { Input } from "./input";
 import { Textarea } from "./textarea";
 import LoadingButton from "./loading-button";
 import { useRouter } from "next/navigation";
+import { Note } from "@prisma/client";
 
 interface AddEditNoteDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
+  noteToEdit?: Note;
 }
 
 export default function AddNoteDialog({
   open,
   setOpen,
+  noteToEdit,
 }: AddEditNoteDialogProps) {
   const router = useRouter();
 
   const form = useForm<CreateNoteSchema>({
     resolver: zodResolver(createNoteSchema),
     defaultValues: {
-      title: "",
-      content: "",
+      title: noteToEdit?.title || "",
+      content: noteToEdit?.content || "",
     },
   });
 
