@@ -14,14 +14,16 @@ import { Input } from "./input";
 import { Textarea } from "./textarea";
 import LoadingButton from "./loading-button";
 import { useRouter } from "next/navigation";
-import { set } from "zod";
 
-interface AddNoteDialogProps {
+interface AddEditNoteDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
-export default function AddNoteDialog({ open, setOpen }: AddNoteDialogProps) {
+export default function AddNoteDialog({
+  open,
+  setOpen,
+}: AddEditNoteDialogProps) {
   const router = useRouter();
 
   const form = useForm<CreateNoteSchema>({
