@@ -39,14 +39,29 @@ export default function AddNoteDialog({
 
   async function onSubmit(input: CreateNoteSchema) {
     try {
-      const response = await fetch("/api/notes", {
-        method: "POST",
-        body: JSON.stringify(input),
-      });
-      if (!response.ok)
-        throw Error("An error occurred while creating the note");
+      if (noteToEdit) {
+        const response = await fetch("/api/notes", {
+          method: "PUT",
+          body: JSON.stringify({
+            id: noteToEdit.id,
+            ...input,
+          }),
+        });
+        if (!response.ok)
+          throw Error(
+            "Status code: " +
+              response.status +
+              " An error occurred while updating the note",
+          );
+      } else {
+        const response = await fetch("/api/notes", {
+          method: "POST",
+          body: JSON.stringify(input),
+        });
+        if (!response.ok) throw Error("Status code: " + response.status);
+        form.reset();
+      }
 
-      form.reset();
       router.refresh();
       setOpen(false);
     } catch (error) {
