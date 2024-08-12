@@ -1,4 +1,6 @@
+import { notesIndex } from "@/lib/db/pinecone";
 import prisma from "@/lib/db/prisma";
+import { getEmbedding } from "@/lib/openai";
 import {
   createNoteSchema,
   deleteNoteSchema,
@@ -24,12 +26,22 @@ export async function POST(req: Request) {
       return Response.json({ error: "unauthorized" }, { status: 401 });
     }
 
-    const note = await prisma.note.create({
-      data: {
-        title,
-        content,
-        userId: userId,
-      },
+    const embedding = await getEmbeddingForNote(title, content);
+
+    const note = await prisma.$transaction(async (tx) => {
+      const note = await tx.note.create({
+        data: {
+          title,
+          content,
+          userId: userId,
+        },
+      });
+
+      await notesIndex.upsert([
+        { id: note.id, values: embedding, metadata: { userId } },
+      ]);
+
+      return note;
     });
 
     return Response.json({ note }, { status: 201 });
@@ -108,4 +120,9 @@ export async function DELETE(req: Request) {
     console.error(error);
     return Response.json({ error: "internal server error" }, { status: 500 });
   }
+}
+
+async function getEmbeddingForNote(title: string, content: string | undefined) {
+  //not every content is filled thats why undefined
+  return getEmbedding(title + "\n\n" + content ?? "");
 }

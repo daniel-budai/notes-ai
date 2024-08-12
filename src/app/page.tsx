@@ -11,15 +11,15 @@ export default function Home() {
   if (userId) redirect("/notes"); // Redirect to notes page if user is signed in
 
   return (
-    <main className="flex flex-col h-screen items-center justify-center gap-5">
+    <main className="flex h-screen flex-col items-center justify-center gap-5">
       <div className="flex items-center gap-4">
         <Image src={logo} alt={"logo"} width={100} height={100} />
-        <span className="font-extrabold tracking-tight text-4xl lg:text-5xl">
+        <span className="text-4xl font-extrabold tracking-tight lg:text-5xl">
           AI notes
         </span>
       </div>
       <div>
-        <p className="max-w-prose text-center ">
+        <p className="max-w-prose text-center">
           An intelligent note-taking app with AI intergration,built with
           Next.js, Tailwind CSS, TypeScript, OpenAI, Clerk, Pinecone, Shadcn,
           and more
