@@ -2,7 +2,7 @@
 
 import { Note as NoteModel } from "@prisma/client";
 import { Card, CardContent, CardDescription, CardHeader } from "./ui/card";
-import { use, useState } from "react";
+import { useState } from "react";
 import AddEditNoteDialog from "./ui/AddEditNoteDialog";
 
 interface NoteProps {
@@ -13,9 +13,20 @@ export default function Note({ note }: NoteProps) {
 
   const wasUpdated = note.updatedAt > note.createdAt;
 
-  const createdUpdatedAtTimestamp = (
-    wasUpdated ? note.updatedAt : note.createdAt
-  ).toDateString();
+  const dateObj = wasUpdated ? note.updatedAt : note.createdAt;
+  const parts = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    weekday: "long",
+  }).formatToParts(dateObj);
+
+  const month = parts.find((p) => p.type === "month")?.value;
+  const day = parts.find((p) => p.type === "day")?.value;
+  const year = parts.find((p) => p.type === "year")?.value;
+  const weekday = parts.find((p) => p.type === "weekday")?.value;
+
+  const customDate = `${month} ${day} | ${year} | ${weekday} |`;
 
   return (
     <>
@@ -24,9 +35,10 @@ export default function Note({ note }: NoteProps) {
         onClick={() => setShowEditDialog(true)}
       >
         <CardHeader>
-          {note.title}
+          <span className="text-2xl font-bold">{note.title}</span>
+          <hr className="my-2 border-t border-muted-foreground/30" />
           <CardDescription>
-            {createdUpdatedAtTimestamp}
+            {customDate}
             {wasUpdated && " (updated)"}
           </CardDescription>
         </CardHeader>
